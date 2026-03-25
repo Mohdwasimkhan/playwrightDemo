@@ -9,29 +9,46 @@ pipeline {
         CI = 'true'
     }
 
-    parameters {
-        string(name: 'TAG', defaultValue: '@smoke', description: 'Test tag')
+    triggers {
+        githubPush()
     }
 
     stages {
 
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/your-username/your-repo.git'
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 sh 'npm ci'
-                sh 'npx playwright install'
+                sh 'npx playwright install --with-deps'
             }
         }
 
-        stage('Run Tests') {
+        stage('Run Smoke Tests') {
             steps {
-                sh "npx playwright test --grep ${TAG}"
+                sh 'npm run smoke'
             }
         }
 
-        stage('Allure Report') {
+        stage('Publish JUnit Report') {
             steps {
-                allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+                junit 'results/junit.xml'
             }
+        }
+    }
+
+    post {
+        always {
+            allure([
+                includeProperties: false,
+                jdk: '',
+                results: [[path: 'allure-results']]
+            ])
         }
     }
 }
