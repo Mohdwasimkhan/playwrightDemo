@@ -17,14 +17,14 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm ci'
-                sh 'npx playwright install --with-deps'
+                bat 'npm ci'
+                bat 'npx playwright install'
             }
         }
 
         stage('Run Smoke Tests') {
             steps {
-                sh 'npm run smoke'
+                bat 'npm run smoke'
             }
         }
 
@@ -38,8 +38,8 @@ pipeline {
     post {
         always {
             allure([
+                commandline: 'Allure',
                 includeProperties: false,
-                jdk: '',
                 results: [[path: 'allure-results']]
             ])
         }
