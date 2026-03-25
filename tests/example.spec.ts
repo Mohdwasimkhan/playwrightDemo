@@ -7,7 +7,7 @@ test('@smoke has title', async ({ page }) => {
   await expect(page).toHaveTitle(/Playwright/);
 });
 
-test('@smoke get started link', async ({ page }) => {
+test('@smoke get jj started link', async ({ page }) => {
   await page.goto('https://playwright.dev/');//
 
   // Click the get started link.
